@@ -294,7 +294,7 @@ updateEmployee = () => {
     connection.promise().query(employeeSql, (err, data) => {
         if (err) throw err;
 
-        const employees = data.map(({ id, first_name, last_name }) => ({ name: first_name + " " + last_name, value:id }));
+        const employees = data.map(({ id, first_name, last_name }) => ({ name: first_name + " " + last_name, value: id }));
 
         inquirer.prompt([
             {
@@ -304,13 +304,46 @@ updateEmployee = () => {
                 choices: employees
             }
         ])
-        .then(employeeChoice => {
-            const employee = employeeChoice.name;
-            const parameters = [];
-            parameters.push(employee);
+            .then(employeeChoice => {
+                const employee = employeeChoice.name;
+                const parameters = [];
+                parameters.push(employee);
 
-            const roleSql = 
-        })
+                const roleSql = `SELECT * FROM role`;
+
+                connection.promise().query(roleSql, (err, data) => {
+                    if (err) throw err;
+
+                    const roles = data.map(({ id, title }) => ({ name: title, value: id }));
+
+                    inquirer.prompt([
+                        {
+                            type: 'list',
+                            name: 'role',
+                            message: 'What is the new role for this employee?',
+                            choices: roles
+                        }
+                    ])
+                        .then(roleChoice => {
+                            const role = roleChoice.role;
+                            parameters.push(role);
+
+                            let employee = parameters[0]
+                            parameters[0] = role
+                            parameters[1] = employee
+
+                            const sql = `UPDATE employee SET role_id = ?`;
+
+                            connection.query(sql, params, (err, result) => {
+                                if (err) throw err;
+                                console.log('Employee has been updated.');
+
+                                viewEmployees();
+                            })
+                        })
+                })
+
+            })
     })
 
-}
+};
