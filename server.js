@@ -1,8 +1,8 @@
-require('dotenv').config()
+import "dotenv/config.js";
 
-const mysql = require("mysql2");
-const inquirer = require("inquirer");
-const cTable = require('console.table');
+import mysql from "mysql2";
+import inquirer from "inquirer";
+import cTable from "console.table";
 
 
 const connection = mysql.createConnection({
@@ -18,7 +18,7 @@ connection.connect(err => {
     afterConnected();
 });
 
-afterConnected = () => {
+const afterConnected = () => {
     console.log('Connected to Employee Tracker')
     userPrompt();
 }
@@ -75,7 +75,7 @@ const userPrompt = () => {
         })
 };
 
-viewDepartments = () => {
+const viewDepartments = () => {
     console.log('Viewing all departments.');
     const sql = `SELECT department_id AS id, department.name AS department FROM department`;
 
@@ -86,18 +86,18 @@ viewDepartments = () => {
     });
 };
 
-viewRoles = () => {
+const viewRoles = () => {
     console.log('Viewing all roles.')
     const sql = `SELECT role.id, role.title, department.name AS department.id`;
 
-    connection.promise(), query(sql, (err, rows) => {
+    connection.promise().query(sql, (err, rows) => {
         if (err) throw err;
         console.table(rows);
         userPrompt();
     });
 }
 
-viewEmployees = () => {
+const viewEmployees = () => {
     console.log('Viewing all Employees.')
     const sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT (manager.first_name, " ", manager.last_name) AS manager FROM employee
     LEFT JOIN role ON employee.role_id = role.id
@@ -105,7 +105,7 @@ viewEmployees = () => {
     LEFT JOIN employee manager ON employee.manager_id = manager.id`;
 }
 
-addDepartment = () => {
+const addDepartment = () => {
     inquirer.prompt([
         {
             type: 'input',
@@ -134,7 +134,7 @@ addDepartment = () => {
 
 };
 
-addRole = () => {
+const addRole = () => {
     inquirer.prompt([
         {
             type: 'input',
@@ -199,7 +199,7 @@ addRole = () => {
         })
 };
 
-addEmployee = () => {
+const addEmployee = () => {
     inquirer.prompt([
         {
             type: 'input',
@@ -287,7 +287,7 @@ addEmployee = () => {
         })
 };
 
-updateEmployee = () => {
+const updateEmployee = () => {
 
     const employeeSql = `SELECT * FROM employee`;
 
